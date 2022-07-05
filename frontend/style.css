@@ -1,56 +1,57 @@
 html {
-    background-color: rgb(204, 224, 241);
+    background-color: rgb(240, 240, 240);
+}
+
+body {
+    margin: 0;
 }
 
 #header {
-    padding-bottom: 10px;
-    text-align: left;
+    display: inline-block;
+    background-color: white;
+    height: 55px;
     width: 100%;
+    margin-bottom: 10px;
+    padding-top: 15px;
+    overflow: auto;
+}
+
+#header>span {
+    float: right;
+    vertical-align: middle;
+    padding-top: 10px;
+    padding-right: 20px;
 }
 
 #header>img {
     padding-left: 20px;
-    max-width: 50px;
-    max-height: 50px;
-    display: inline-block;
+    max-height: 35px;
     vertical-align: middle;
 }
 
-#header>p {
-    display: inline-block;
+#title>img {
+    padding-left: 20px;
+    max-width: 50px;
+    max-height: 50px;
+    display: inline;
+    vertical-align: middle;
+}
+
+#title>p {
+    display: inline;
     font-family: Arial;
     font-size: 25px;
     font-weight: bold;
     vertical-align: middle;
 }
 
-#header>span {
-    display: block;
-    background-color: white;
-    height: 65px;
-    width: 100%;
-    margin-left: -10px;
-    margin-top: -10px;
-    margin-right: -10px;
-}
-
-#header>span img {
-    padding-left: 20px;
-    padding-top: 15px;
-    max-height: 35px;
-    vertical-align: middle;
-}
-
 #info {
-    display: table;
-    table-layout: fixed;
-    width: 100%;
+    width: 90%;
     margin: auto;
     border-spacing: 20px;
 }
 
 .metric {
-    display: table-cell;
     border-radius: 5px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
@@ -58,6 +59,20 @@ html {
     color: white;
     font-size: 20px;
     font-weight: bold;
+    margin: 10px 0px 10px 0px;
+}
+
+@media(min-width: 500px) {
+    #info {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .metric {
+        display: table-cell;
+    }
+
 }
 
 .metric:hover {
@@ -88,11 +103,10 @@ html {
 #products-table>p {
     font-size: 20px;
     font-family: Arial;
-    /* width: 95%; */
     margin: 0px;
 }
 
-table {
+#products-table>table {
     border-collapse: collapse;
     width: 100%;
     margin: 12px 30px 0px 0px;
@@ -107,4 +121,60 @@ table {
     font-size: 15px;
     font-weight: 50;
     border-top: 1px solid rgb(169, 189, 189);
+}
+
+@media(max-width: 500px) {
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    td {
+        /* Behave  like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    td:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        /* top: 2px; */
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        background-color: #ddd;
+    }
+
+    td:nth-of-type(1):before {
+        background-color: #aaa;
+        content: "Product ID";
+    }
+
+    td:nth-of-type(2):before {
+        content: "Description";
+    }
+
+    td:nth-of-type(3):before {
+        content: "Sale Amount";
+    }
+
+    td:nth-of-type(4):before {
+        content: "Profit Percentage";
+        /* margin-bottom: 5px; */
+    }
 }
