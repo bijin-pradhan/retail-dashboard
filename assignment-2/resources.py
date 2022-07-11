@@ -2,6 +2,7 @@ from flask import make_response, render_template, request
 from flask_jwt import jwt_required
 from flask_restful import Resource
 
+from calculate_metrics import per_customer, total_sales, unique_customer
 from user import User
 
 
@@ -26,9 +27,9 @@ class Metrics(Resource):
     @jwt_required()
     def get(self):
         return {
-            'Total Sales': 12345,
-            'Sales per customer': 111,
-            'Number of Unique Customers': 9876
+            'Total Sales': total_sales(),
+            'Number of Unique Customers': unique_customer(),
+            'Sales per customer': per_customer(),
             }
 
 class Daily(Resource):
