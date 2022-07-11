@@ -1,48 +1,30 @@
-import jwt
-from flask import Flask, make_response, render_template, request
-from flask_restful import Api, Resource
+from flask import Flask
+from flask_cors import CORS
+from flask_jwt import JWT
+from flask_restful import Api
 
-from security import authenticate
+import resources
+from security import authenticate, identity
 
 app = Flask(__name__, template_folder='.')
+CORS(app)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["PROPAGATE_EXCEPTIONS"] = True
 app.secret_key = 'bijin'
 api = Api(app)
 
-class TotalSales(Resource):
-    def get(self):
-        return {'Total Sales': 12345}
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
-class PerCustomer(Resource):
-    def get(self):
-        return {'Sales per customer': 111}
+jwt = JWT(app, authenticate, identity)
 
-class Unique(Resource):
-    def get(self):
-        return {'Number of Unique Customers': 9876}
+api.add_resource(resources.Metrics, '/metrics')
+api.add_resource(resources.Login, '/login')
 
-class Daily(Resource):
-    def get(self):
-        headers = {'Content-Type': 'text/html'}
-        return make_response(render_template('sales_table.html'), 200, headers)
 
-class Login(Resource):
-    def get(self):
-        headers = {'Content-Type': 'text/html'}
-        return make_response(render_template('login.html'), 200, headers)
-    
-
-    def post(self):
-        username = request.form['username']
-        password = request.form['password']
-        user = authenticate(username, password)
-        if user is not None:
-            token = jwt.encode({"id": user.id}, app.secret_key, 'HS256').decode('utf-8')
-            return make_response({"result":"success", "token": token}, 200, {"Authorization": f'JWT {token}'})
-
-api.add_resource(TotalSales, "/total_sales")
-api.add_resource(Unique, "/unique")
-api.add_resource(PerCustomer, "/per_customer")
-api.add_resource(Daily, '/daily')
-api.add_resource(Login, '/login')
-
-app.run(debug=True)
+if __name__=="__main__":
+    from db import db
+    db.init_app(app)
+    app.run(debug=True)
