@@ -1,0 +1,51 @@
+<div id="title">
+    <img src="assets/images/dashboard_icon.png" alt="dashboard-icon">
+    <p>Dashboard</p>
+</div>
+
+<div id="info">
+    <div id="total-sales" class="metric">
+        <span class="material-symbols-outlined" id="account">
+            monitoring
+        </span>
+        <p>Total Sales</p>
+        <p>${{ totalSales }}</p>
+    </div>
+    <div id="number-customers" class="metric">
+        <span class="material-symbols-outlined">
+            database
+        </span>
+        <p>Number of Unique Customers</p>
+        <p>{{ numCust }}</p>
+    </div>
+    <div id="average-spend" class="metric">
+        <span class="material-symbols-outlined">
+            flag
+        </span>
+        <p>Average Spend</p>
+        <p>${{ avgSpend }}</p>
+    </div>
+</div>
+<!-- list of products -->
+<div id="products-table">
+    <p>List of Products</p>
+    <hr>
+    <table>
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Description</th>
+                <th>Sale Amount</th>
+                <th>Profit Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let product of productsList">
+                <td>{{product.productID}}</td>
+                <td>{{product.productName}}</td>
+                <td>{{product.sales}}</td>
+                <td>{{product.profitPct}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
