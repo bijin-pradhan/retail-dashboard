@@ -1,0 +1,3 @@
+<app-header></app-header>
+<app-login *ngIf="!logged_in" (loginEvent)="updateLogin()"></app-login>
+<app-dashboard *ngIf="logged_in" (reloginEvent)="restartSession()"></app-dashboard>
