@@ -1,0 +1,18 @@
+<div *ngIf="chartType==='pie-chart'">
+    <app-pie-chart [chartUrl]="chartUrl"></app-pie-chart>
+</div>
+<div *ngIf="chartType==='bar-chart'">
+    <app-bar-chart [chartUrl]="chartUrl"></app-bar-chart>
+</div>
+<div *ngIf="chartType==='area-chart-animated'">
+    <app-area-chart-animated [chartUrl]="chartUrl"></app-area-chart-animated>
+</div>
+<div *ngIf="chartType==='area-chart'">
+    <app-area-chart [chartUrl]="chartUrl"></app-area-chart>
+</div>
+<div *ngIf="chartType=='heatmap'">
+    <app-heatmap [chartUrl]="chartUrl"></app-heatmap>
+</div>
+<div *ngIf="chartType=='treemap'">
+    <app-treemap [chartUrl]="chartUrl"></app-treemap>
+</div>

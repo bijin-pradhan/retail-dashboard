@@ -1,0 +1,158 @@
+<div class="flex flex-col flex-auto w-full">
+    <div class="flex flex-wrap w-full max-w-screen-xl mx-auto p-6 md:p-8">
+        <!-- Title and action buttons -->
+        <div class="flex items-center justify-between w-full">
+            <div>
+                <div class="text-3xl text-gray-500 font-semibold tracking-tight leading-8">Analytics dashboard</div>
+                <div class="font-medium tracking-tight text-gray-500">Monitor metrics, check reports and review
+                    performance</div>
+            </div>
+            <div class="flex items-center ml-6">
+                <button class="hidden sm:inline-flex" mat-flat-button [color]="'accent'">
+                    <mat-icon class="icon-size-5">settings</mat-icon>
+                    <span class="ml-2">Settings</span>
+                </button>
+                <button class="hidden sm:inline-flex ml-3" mat-flat-button [color]="'primary'">
+                    <mat-icon class="icon-size-5">save</mat-icon>
+                    <span class="ml-2">Export</span>
+                </button>
+                <mat-button-toggle class="hidden sm:inline-flex ml-3 rounded-full" #refresh>
+                    <mat-icon class="icon-size-5">refresh</mat-icon>
+                    <span class="ml-2">Refresh</span>
+                </mat-button-toggle>
+                <!-- Actions menu (visible on xs) -->
+                <div class="sm:hidden">
+                    <button [matMenuTriggerFor]="actionsMenu" mat-icon-button>
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #actionsMenu="matMenu">
+                        <button mat-menu-item>Export</button>
+                        <button mat-menu-item>Settings</button>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-8">
+            <!-- Regions Overview -->
+            <div
+                class="sm:col-span-2 lg:col-span-3 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">Regions Overview
+                        </div>
+                        <div class="font-medium text-secondary">Averages by Region</div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto mt-3">
+                    <mat-spinner *ngIf="!animatedChartData" class="mx-auto my-50"></mat-spinner>
+                    <app-charts [chartType]="'area-chart-animated'" [chartUrl]="animatedChartData"
+                        *ngIf="animatedChartData">
+                    </app-charts>
+                </div>
+            </div>
+
+            <!-- Average Speed -->
+            <div
+                class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-slate-400 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-start justify-between m-6 mb-0">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Average Speed</div>
+                </div>
+                <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+                    <mat-spinner *ngIf="!averagesData" class="m-auto"></mat-spinner>
+                    <div class="text-7xl font-bold tracking-tighter leading-tight pb-6" *ngIf="averagesData">
+                        {{averagesData.avg_speed}} Mb/s
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avg Prices -->
+            <div class="flex flex-col flex-auto bg-slate-500 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-start justify-between m-6 mb-0">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Average Price of 1GB </div>
+                    <div class="ml-2">
+                        <button class="h-6 min-h-6 px-2 rounded-full bg-hover" mat-button
+                            [matMenuTriggerFor]="avgPriceMenu">
+                            <span class="font-medium text-sm text-secondary">{{avgPriceYear}}</span>
+                        </button>
+                        <mat-menu #avgPriceMenu="matMenu">
+                            <button (click)="onClickAvgPrice(option)" *ngFor="let option of yearOptions" mat-menu-item>
+                                {{option}}
+                            </button>
+                        </mat-menu>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+                    <mat-spinner *ngIf="!averagesData" class="m-auto"></mat-spinner>
+                    <div class="text-7xl font-bold tracking-tighter leading-tight" *ngIf="averagesData"> ${{ curAvg }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Changes -->
+            <div class="flex flex-col flex-auto bg-slate-600 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-start justify-between m-6 mb-0">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate"> Change in Average Price </div>
+                    <div class="ml-2">
+                        <button class="h-6 min-h-6 px-2 rounded-full bg-hover" mat-button
+                            [matMenuTriggerFor]="changeMenu">
+                            <span class="font-medium text-sm text-secondary">{{changeYear}}</span>
+                        </button>
+                        <mat-menu #changeMenu="matMenu">
+                            <button (click)="onClickChanges(option)" *ngFor="let option of changeOptions" mat-menu-item>
+                                {{option}}
+                            </button>
+                        </mat-menu>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+                    <mat-spinner *ngIf="!averagesData" class="m-auto"></mat-spinner>
+                    <div class="text-7xl font-bold tracking-tighter leading-tight" *ngIf="averagesData"> ${{ curChange
+                        }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-8 sm:grid-cols-2 lg:grid-cols-3">
+            <!-- Correlation Heatmap -->
+            <div class="sm:col-span-2 lg:col-span-2 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl
+            overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">Correlation
+                            Heatmap
+                        </div>
+                        <div class="font-medium text-secondary">Correlation between different attributes</div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto h-70 w-auto">
+                    <mat-spinner *ngIf="!heatmapData" class="m-auto"></mat-spinner>
+                    <app-charts [chartType]="'heatmap'" [chartUrl]="heatmapData" *ngIf="heatmapData"></app-charts>
+                </div>
+            </div>
+            <!-- Internet Users and Population Treemap -->
+            <div class="col-span-1 dark flex flex-col flex-auto bg-slate-400 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-start justify-between m-6 mb-0">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate"> Population Demographics </div>
+                    <div class="ml-2">
+                        <button class="h-6 min-h-6 px-2 rounded-full bg-hover" mat-button
+                            [matMenuTriggerFor]="demographicsMenu">
+                            <span class="font-medium text-sm text-secondary">{{demographicsOption}}</span>
+                        </button>
+                        <mat-menu #demographicsMenu="matMenu">
+                            <button (click)="onClickDemo('Population')" mat-menu-item>
+                                Population
+                            </button>
+                            <button (click)="onClickDemo('Internet Users')" mat-menu-item>
+                                Internet Users
+                            </button>
+                        </mat-menu>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto h-70 w-auto">
+                    <mat-spinner *ngIf="!treemapData" class="m-auto"></mat-spinner>
+                    <app-charts [chartType]="'treemap'" [chartUrl]="treemapData" *ngIf="treemapData"></app-charts>
+                </div>
+            </div>
+        </div>
+    </div>

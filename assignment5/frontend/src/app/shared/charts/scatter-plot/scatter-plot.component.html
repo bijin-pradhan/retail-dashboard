@@ -1,0 +1,33 @@
+<div class="wrapper mt-3" *ngIf="responseData.data !== null">
+  <app-loader [isLoading]="loader"></app-loader>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-10 col-8">
+          <h6>{{ chartName?.split('_').join(' ') }}</h6>
+        </div>
+        <div class="col-md-2 col-4">
+          <span *ngIf="chartData?.length !== 0" class="pt-1 download float-right">CSV</span>
+        </div>
+      </div>
+      <div class="chartsClass pt-3" *ngIf="chartData.length !== 0">
+        <div class="h-100" *ngFor="let field of chartData">
+          <div class="col">
+            <div style="width: 700px; height: 500" echarts [options]="field"></div>
+          </div>
+        </div>
+      </div>
+      <span
+        *ngIf="chartData.length === 0 && !loader"
+        class="nodataClass d-flex justify-content-center align-items-center"
+      >
+        No Data avalilable
+      </span>
+    </div>
+  </div>
+</div>
+<div *ngIf="responseData.data === null" class="wrapper card mt-3">
+  <div class="card-body nodataClass d-flex justify-content-center align-items-center">
+    <span class="">No Data Avalilable</span>
+  </div>
+</div>

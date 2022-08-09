@@ -1,0 +1,13 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  template: `<router-outlet></router-outlet>`
+})
+export class AppComponent {
+  title = 'tiger_template';
+  displayTable() {
+    console.log('calling api');
+  }
+  constructor() { }
+}
