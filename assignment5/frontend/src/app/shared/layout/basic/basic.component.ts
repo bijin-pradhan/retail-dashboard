@@ -5,8 +5,8 @@ import { Subscription } from 'rxjs';
 
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
-import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { MenuItemConfig } from '../navigation.types'
+import { User } from 'src/app/interfaces/user.interface'
 
 @Component({
     selector: 'app-basic',
@@ -37,7 +37,7 @@ export class BasicComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngOnInit(): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.getCurrentUser() as User;
 
         this.isAdmin = user.isAdmin;
         this.userName = user.fullName;

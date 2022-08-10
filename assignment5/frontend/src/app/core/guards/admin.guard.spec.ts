@@ -1,9 +1,11 @@
+import { Router } from '@angular/router';
+import { AuthenticationService } from '../services/auth.service';
 import { AdminGuard } from './admin.guard';
 
 describe('AdminGuard', () => {
 
-    let router;
-    let authService;
+    let router: any;
+    let authService: any;
 
     beforeEach(() => {
         router = jasmine.createSpyObj(['navigate']);

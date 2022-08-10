@@ -6,6 +6,7 @@ import { LoginResponse } from 'src/app/interfaces/data.interface';
 import { NotificationService } from 'src/app/core/services/notification.service';
 
 import { of, EMPTY } from 'rxjs';
+import { User } from 'src/app/interfaces/user.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -56,11 +57,11 @@ export class AuthenticationService {
         this.localStorage.removeItem('currentUser');
     }
 
-    getCurrentUser(): any {
+    getCurrentUser(): User | null {
         // TODO: Enable after implementation
         const user = this.localStorage.getItem('currentUser');
         if (user != null) {
-            return JSON.parse(user);
+            return JSON.parse(user) as User;
         }
         else {
             return null;

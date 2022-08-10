@@ -57,7 +57,9 @@ export class HeatmapComponent implements OnInit, OnChanges {
           calculable: true,
           orient: 'horizontal',
           left: 'center',
-          bottom: '5%'
+          bottom: '5%',
+          color: ['#FF8000', '#FFFFFF']
+
         },
         series: [
           {

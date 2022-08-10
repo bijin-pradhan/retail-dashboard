@@ -3,9 +3,9 @@ import * as moment from 'moment';
 
 describe('AuthGuard', () => {
 
-    let router;
-    let authService;
-    let notificationService;
+    let router: any;
+    let authService: any;
+    let notificationService: any;
 
     beforeEach(() => {
         router = jasmine.createSpyObj(['navigate']);
