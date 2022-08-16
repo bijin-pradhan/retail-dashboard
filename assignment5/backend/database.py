@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import pandas as pd
 from sqlalchemy import create_engine
 
@@ -108,19 +110,38 @@ def group_by_region():
         .group_by(InternetData.continental_region)
         .all()
     )
-    return [{
-        'region': name,
-        'data':{
-        'num_countries': countries,
-        'avg_speed': speed,
-        'avg_price': price,
-        'avg_plans': plans,
-        'expensive': exp,
-        'cheapest': cheap,
-        'internet_users': users,
-        'population': pop
-    }}for name, countries, speed, price, plans, exp, cheap, users, pop in rows]
+    
+    names = [
+        'Number of Countries',
+        'Average Speed',
+        'Average Price of 1GB',
+        'Average Number of Plans',
+        'Most Expensive 1GB',
+        'Cheapest 1GB'
+    ]
+    
+    regions = []
+    values = [[] for _ in names]
+    internet_users = []
+    population = []
+    for name, countries, speed, price, plans, exp, cheap, users, pop in rows:
+        regions.append(name)
+        values[0].append(countries)
+        values[1].append(speed)
+        values[2].append(price)
+        values[3].append(plans)
+        values[4].append(exp)
+        values[5].append(cheap)
+        internet_users.append(users)
+        population.append(pop)
 
+    return {
+        'names': names,
+        'regions': regions,
+        'values': values,
+        'internet_users': internet_users,
+        'population': population
+    }
 
 def corr_heatmap():
     engine = create_engine("sqlite:///data/cleaned/data.db?charset=utf8")

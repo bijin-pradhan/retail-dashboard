@@ -52,38 +52,16 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
 
     getRegionData() {
         this._dataService.regionGroups().subscribe((response: RegionGroups) => {
-            let names = [
-                'Number of Countries',
-                'Average Price of 1GB',
-                'Average Speed',
-                'Average Num of Plans',
-                'Cheapest 1GB',
-                'Most Expensive 1GB',
-                '% of Population that uses Internet'
-            ];
-            let values: number[][] = [[], [], [], [], [], [], []]
-            let xAxisData = [];
-            for (let regionGroup of response.grouped) {
-                xAxisData.push(regionGroup.region)
-                values[0].push(regionGroup.data.num_countries)
-                values[1].push(regionGroup.data.avg_price)
-                values[2].push(regionGroup.data.avg_speed)
-                values[3].push(regionGroup.data.avg_plans)
-                values[4].push(regionGroup.data.cheapest)
-                values[5].push(regionGroup.data.expensive)
-                this.internet_users.push(regionGroup.data.internet_users)
-                this.population.push(regionGroup.data.population)
-                let ratio = regionGroup.data.internet_users / regionGroup.data.population;
-                ratio = Math.round(ratio * 10000) / 100;
-                values[6].push(ratio);
-            }
+            console.log(response)
             this.animatedChartData = {
-                xAxisData: xAxisData,
-                names: names,
-                values: values,
+                xAxisData: response.grouped.regions,
+                names: response.grouped.names,
+                values: response.grouped.values,
             };
+            this.population = response.grouped.population;
+            this.internet_users = response.grouped.internet_users;
             this.treemapData = {
-                names: xAxisData,
+                names: response.grouped.regions,
                 values: this.population,
             }
             this.cd.detectChanges();

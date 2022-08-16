@@ -9,18 +9,13 @@ export interface Averages {
 
 export interface RegionGroups {
     grouped: {
-        region: string,
-        data: {
-            num_countries: number,
-            avg_speed: number,
-            avg_price: number,
-            avg_plans: number,
-            expensive: number,
-            cheapest: number,
-            internet_users: number,
-            population: number
-        }
-    }[]
+        names: string[],
+        regions: string[],
+        values: number[][],
+        internet_users: number[],
+        population: number[],
+
+    }
 }
 
 export interface Changes {
