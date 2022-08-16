@@ -4,8 +4,8 @@ import { delay } from 'rxjs/operators';
 import * as moment from 'moment';
 import { LoginResponse } from 'src/app/interfaces/data.interface';
 import { NotificationService } from 'src/app/core/services/notification.service';
-
-import { of, EMPTY } from 'rxjs';
+import jwt_decode, { JwtPayload } from 'jwt-decode'
+import { of, EMPTY, Observable } from 'rxjs';
 import { User } from 'src/app/interfaces/user.interface';
 
 @Injectable({
@@ -25,30 +25,12 @@ export class AuthenticationService {
     ) {
     }
 
-    login(email: string, password: string) {
+    login(email: string, password: string): Observable<LoginResponse> {
         const loginData = JSON.stringify({ 'email': email, 'password': password })
-        this.http.post(
+        return this.http.post<LoginResponse>(
             'http://localhost:5000/signin',
             loginData,
             this.httpOptions
-        ).subscribe({
-            next: (response) => {
-                const resp = response as LoginResponse
-                this.localStorage.setItem('currentUser', JSON.stringify({
-                    token: resp['access_token'],
-                    isAdmin: resp['is_admin'],
-                    email: resp['email'],
-                    id: resp['id'],
-                    alias: resp['email'].split("@")[0],
-                    expiration: moment().add(1, 'days').toDate(),
-                    fullName: resp['fullname']
-                }))
-            },
-            error: (error) => {
-                // console.log(error)
-                this.notificationService.openSnackBar('wrong email and password combination');
-            }
-        }
         )
     }
 
