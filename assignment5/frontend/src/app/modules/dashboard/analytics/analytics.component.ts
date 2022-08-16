@@ -52,7 +52,6 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
 
     getRegionData() {
         this._dataService.regionGroups().subscribe((response: RegionGroups) => {
-            console.log(response)
             this.animatedChartData = {
                 xAxisData: response.grouped.regions,
                 names: response.grouped.names,

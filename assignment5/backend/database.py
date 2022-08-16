@@ -110,14 +110,15 @@ def group_by_region():
         .group_by(InternetData.continental_region)
         .all()
     )
-    
+
     names = [
         'Number of Countries',
         'Average Speed',
         'Average Price of 1GB',
         'Average Number of Plans',
         'Most Expensive 1GB',
-        'Cheapest 1GB'
+        'Cheapest 1GB',
+        r'% of Population that uses internet'
     ]
     
     regions = []
@@ -132,6 +133,7 @@ def group_by_region():
         values[3].append(plans)
         values[4].append(exp)
         values[5].append(cheap)
+        values[6].append((users/pop) * 100 if users and pop else 0)
         internet_users.append(users)
         population.append(pop)
 
