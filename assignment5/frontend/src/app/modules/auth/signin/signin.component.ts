@@ -40,7 +40,6 @@ export class SigninComponent implements OnInit {
     this.authService.login(formData['email'], formData['password']).subscribe({
       next: (response) => {
         const resp = response
-        console.log(resp);
         const decoded = jwt_decode<JwtPayload>(resp['access_token']);
         localStorage.setItem('currentUser', JSON.stringify({
           token: resp['access_token'],
