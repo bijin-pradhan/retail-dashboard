@@ -12,6 +12,7 @@ mapping = {
     'avg_prices': database.avg_prices,
     'grouped': database.group_by_region,
     'corr': database.corr_heatmap,
+    'changes': database.change_in_price,
 }
 
 class Data(Resource):

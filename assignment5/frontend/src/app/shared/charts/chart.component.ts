@@ -7,8 +7,8 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ChartComponent implements OnInit {
   private myChart: any = null;
-  @Input() chartUrl = '';
-  @Input() chartType = '';
+  @Input() chartUrl: any = null;
+  @Input() chartType: any = '';
   constructor() { }
 
   ngOnInit() {

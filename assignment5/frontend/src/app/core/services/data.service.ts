@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Averages, HeatmapData, RegionGroups } from 'src/app/interfaces/data.interface'
+import { Averages, Changes, HeatmapData, RegionGroups } from 'src/app/interfaces/data.interface'
 
 import { Observable } from 'rxjs'
 @Injectable({
@@ -24,6 +24,14 @@ export class DataService {
     })
 
     return this.http.post<Averages>(this.url, req, this.httpOptions)
+  }
+
+  changes(): Observable<Changes> {
+    const req = JSON.stringify({
+      'changes': [],
+    })
+
+    return this.http.post<Changes>(this.url, req, this.httpOptions);
   }
 
   regionGroups(): Observable<RegionGroups> {

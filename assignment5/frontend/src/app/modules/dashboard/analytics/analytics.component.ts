@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { DataService } from 'src/app/core/services/data.service';
-import { Averages, HeatmapData, RegionGroups } from 'src/app/interfaces/data.interface';
+import { Averages, Changes, HeatmapData, RegionGroups } from 'src/app/interfaces/data.interface';
 @Component({
     selector: 'analytics',
     templateUrl: './analytics.component.html',
@@ -11,15 +11,13 @@ import { Averages, HeatmapData, RegionGroups } from 'src/app/interfaces/data.int
 export class AnalyticsComponent implements OnInit, OnDestroy {
     animatedChartData: any;
 
-    averagesData: any;
-
+    averagesData: Observable<Averages> = new Observable<Averages>();
     curAvg: number = 0;
-    yearOptions = [2022, 2021, 2020];
     avgPriceYear = 2022;
 
+    changesData: Observable<Changes> = new Observable<Changes>();
     curChange = 0;
-    changeOptions = ['2020 to 2021', '2021 to 2022'];
-    changeYear = this.changeOptions[0];
+    changeYear = '2020 to 2021';
 
     heatmapData: any;
 
@@ -47,8 +45,9 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
      */
     async ngOnInit() {
         this.getRegionData();
-        this.getAverages();
-        this.getCorrData();
+        this.averagesData = this._dataService.averages();
+        this.changesData = this._dataService.changes();
+        this.heatmapData = this._dataService.corrHeatMap();
     }
 
     getRegionData() {
@@ -91,56 +90,6 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
         })
     }
 
-    getAverages() {
-        this._dataService.averages().subscribe((response: Averages) => {
-            this.averagesData = response as Averages;
-            this.averagesData.avg_speed = Math.round(response.avg_speed * 100) / 100;
-            this.averagesData.avg_prices.avg_22 = Math.round(response.avg_prices.avg_22 * 100) / 100;
-            this.averagesData.avg_prices.avg_21 = Math.round(response.avg_prices.avg_21 * 100) / 100;
-            this.averagesData.avg_prices.avg_20 = Math.round(response.avg_prices.avg_20 * 100) / 100;
-            this.curAvg = this.averagesData.avg_prices.avg_22;
-            this.curChange = response.avg_prices.avg_21 - response.avg_prices.avg_20;
-            this.curChange = Math.round(this.curChange * 100) / 100;
-            this.cd.detectChanges();
-        })
-    }
-
-    getCorrData() {
-        this._dataService.corrHeatMap().subscribe((response: HeatmapData) => {
-            this.heatmapData = response;
-            this.cd.detectChanges();
-        })
-    }
-
-    onClickAvgPrice(option: number) {
-        this.avgPriceYear = option;
-        switch (option) {
-            case 2022:
-                this.curAvg = this.averagesData.avg_prices.avg_22;
-                break;
-            case 2021:
-                this.curAvg = this.averagesData.avg_prices.avg_21;
-                break;
-            case 2020:
-                this.curAvg = this.averagesData.avg_prices.avg_20;
-                break;
-            default:
-                this.curAvg = 0;
-        }
-    }
-
-    onClickChanges(option: string) {
-        this.changeYear = option;
-        switch (option) {
-            case this.changeOptions[0]:
-                this.curChange = this.averagesData.avg_prices.avg_21 - this.averagesData.avg_prices.avg_20;
-                break;
-            case this.changeOptions[1]:
-                this.curChange = this.averagesData.avg_prices.avg_22 - this.averagesData.avg_prices.avg_21;
-                break;
-        }
-        this.curChange = Math.round(this.curChange * 100) / 100;
-    }
 
     onClickDemo(option: string) {
         this.demographicsOption = option;

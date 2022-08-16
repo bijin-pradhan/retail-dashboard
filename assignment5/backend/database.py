@@ -6,20 +6,20 @@ from models import InternetData
 
 
 def avg_speed():
-    return db.session.query(db.func.avg(InternetData.avg_speed)).scalar()
+    return round(db.session.query(db.func.avg(InternetData.avg_speed)).scalar(), 2)
 
 def avg_prices():
     return {
-        'avg_22': db.session.query(db.func.avg(InternetData.avg_1gb_22)).scalar(),
-        'avg_21': db.session.query(db.func.avg(InternetData.avg_1gb_21)).scalar(),
-        'avg_20': db.session.query(db.func.avg(InternetData.avg_1gb_20)).scalar(),
+        '2022': round(db.session.query(db.func.avg(InternetData.avg_1gb_22)).scalar(), 2),
+        '2021': round(db.session.query(db.func.avg(InternetData.avg_1gb_21)).scalar(), 2),
+        '2020': round(db.session.query(db.func.avg(InternetData.avg_1gb_20)).scalar(), 2),
     }
 
 def change_in_price():
     prices = avg_prices()
     return {
-        'change_20_21': prices['avg_20'] - prices['avg_21'],
-        'change_21_22': prices['avg_21'] - prices['avg_22']
+        'change_20_21': round(prices['2020'] - prices['2021'], 2),
+        'change_21_22': round(prices['2021'] - prices['2022'], 2)
     }
 
 def most_expensive(n=1, avg=""):

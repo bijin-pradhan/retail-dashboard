@@ -1,9 +1,9 @@
 export interface Averages {
     avg_speed: number,
     avg_prices: {
-        avg_22: number,
-        avg_21: number,
-        avg_20: number,
+        2022: number,
+        2021: number,
+        2020: number,
     },
 }
 
@@ -21,6 +21,13 @@ export interface RegionGroups {
             population: number
         }
     }[]
+}
+
+export interface Changes {
+    changes: {
+        change_20_21: number,
+        change_21_22: number,
+    }
 }
 
 export interface LoginResponse {
