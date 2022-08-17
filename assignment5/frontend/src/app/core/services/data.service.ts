@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Averages, Changes, HeatmapData, RegionGroups } from 'src/app/interfaces/data.interface'
+import { Averages, Changes, CorrData, RegionGroups } from 'src/app/interfaces/data.interface'
+import { HeatmapData } from 'src/app/interfaces/chart.interfaces';
 
 import { Observable } from 'rxjs'
 @Injectable({
@@ -42,10 +43,10 @@ export class DataService {
     return this.http.post<RegionGroups>(this.url, req, this.httpOptions)
   }
 
-  corrHeatMap(): Observable<HeatmapData> {
+  corrHeatMap(): Observable<CorrData> {
     const req = JSON.stringify({
       'corr': []
     })
-    return this.http.post<HeatmapData>(this.url, req, this.httpOptions)
+    return this.http.post<CorrData>(this.url, req, this.httpOptions)
   }
 }

@@ -1,3 +1,5 @@
+import { HeatmapData } from "./chart.interfaces"
+
 export interface Averages {
     avg_speed: number,
     avg_prices: {
@@ -18,6 +20,10 @@ export interface RegionGroups {
     }
 }
 
+export interface CorrData {
+    corr: HeatmapData,
+}
+
 export interface Changes {
     changes: {
         change_20_21: number,
@@ -31,23 +37,4 @@ export interface LoginResponse {
     email: string,
     id: string,
     fullname: string
-}
-
-export interface ChartData {
-    xAxisData: string[],
-    names: string[],
-    values: number[][]
-}
-
-export interface HeatmapData {
-    corr: {
-        xAxisData: string[],
-        yAxisData: string[],
-        seriesData: number[],
-    }
-}
-
-export interface TreemapData {
-    names: string[],
-    values: number[],
 }

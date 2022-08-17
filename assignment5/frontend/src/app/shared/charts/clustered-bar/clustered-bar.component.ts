@@ -1,109 +1,89 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ExploreService } from '../../explore.service';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { EChartsOption, SeriesOption } from 'echarts';
+import { ChartData } from 'src/app/interfaces/chart.interfaces';
 
 @Component({
   selector: 'app-clustered-bar',
   templateUrl: './clustered-bar.component.html',
   styleUrls: ['../bar-chart/bar-chart.component.scss'],
 })
-export class ClusteredBarComponent implements OnInit, OnDestroy {
-  loader: boolean = true;
-  responseData: any = {};
-  constructor(private exportService: ExploreService) {}
-  @Input() params: any;
-  @Input() chartId!: string;
-  @Input() reportId!: string;
-  chartData: any;
-  chartName: any;
-  sub!: Subscription;
-  param: any;
-  ngOnInit(): void {
-    this.sub = this.params.subscribe((res: any) => {
-      this.param = res;
-      this.getChartData();
-    });
-  }
-  getChartData() {
-    this.loader = true;
-    this.param['chart_id'] = this.chartId;
-    this.param['report_id'] = this.reportId;
-    this.chartData = [];
-    let series: any = [];
-    this.exportService.getReportData(this.param).subscribe({
-      next: (res: any) => {
-        this.responseData = res;
-        if (res.data !== null) {
-          this.loader = false;
-          let newObj = {};
-          this.chartData = [];
-          res.data[0].report_data.forEach((ele: any, i: any) => {
-            let index = i + 1;
-            this.chartName = ele.title;
-            series = [];
-            newObj = {
-              legend: {
-                align: 'left',
-                bottom: '0px',
-                textStyle: {
-                  fontSize: '10px',
-                  fontWeight: 'normal',
-                },
-              },
-              tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                  type: 'shadow',
-                },
-              },
-              title: {
-                mainType: 'title',
-                subtext: 'Plot ' + index + '- ' + ele.sub_title,
-                textAlign: 'left',
-                subtextStyle: { fontWeight: 'lighter' },
-              },
-              grid: {
-                top: '30px',
-                bottom: '30px',
-                containLabel: true,
-              },
-              xAxis: {
-                type: 'value',
-                axisLabel: {
-                  fontSize: '10px',
-                },
-              },
-              yAxis: {
-                type: 'category',
-                data: ['values'],
-                axisLabel: {
-                  fontSize: '10px',
-                },
-              },
-            };
-            ele.category.forEach((values: any, i: any) => {
-              let obj = {};
-              obj = {
-                name: values,
-                type: 'bar',
-                stack: 'total',
-                emphasis: {
-                  focus: 'series',
-                },
-                data: [ele.data[i]],
-              };
-              series.push(obj);
-            });
+export class ClusteredBarComponent implements OnInit, OnChanges {
+  @Input() animated = false;
+  @Input() chartData!: ChartData;
+  _chartOption: EChartsOption = {};
 
-            newObj['series'] = series;
-            this.chartData.push(newObj);
-          });
-        }
-      },
-      error: (error: any) => {},
-    });
+  constructor() {
   }
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
+
+  ngOnInit() {
+    this.loadChart();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadChart();
+  }
+
+  private loadChart(): void {
+    var xAxisData = [];
+    var values: number[][] = [];
+    var names: string[] = [];
+
+    if (this.chartData) {
+      let data = this.chartData;
+      xAxisData = data.xAxisData;
+      values = data.values;
+      names = data.names;
+
+      const s: SeriesOption[] = [];
+      for (let i = 0; i < values.length; i++) {
+        s.push({
+          name: names[i],
+          type: 'bar',
+          stack: 'total',
+          stackStrategy: 'samesign',
+          data: values[i],
+          animationDelay: (idx: number) => {
+            if (this.animated)
+              return idx * 10 + i
+            else
+              return 0;
+          }
+        })
+      }
+
+      // only select the first key
+      // rest are hidden
+      let selected: { [id: string]: boolean } = {};
+      for (let name of names) {
+        selected[name] = false
+      }
+
+      selected[names[0]] = true
+
+      this._chartOption = {
+        legend: {
+          data: names,
+          selected: selected,
+          align: 'left',
+        },
+        tooltip: {},
+        xAxis: {
+          data: xAxisData,
+          silent: false,
+          splitLine: {
+            show: false,
+          },
+        },
+        yAxis: {},
+        series: s,
+        animationEasing: 'elasticOut',
+        animationDelayUpdate: (idx: number) => {
+          if (this.animated)
+            return idx * 5
+          else
+            return 0;
+        },
+      };
+    }
   }
 }

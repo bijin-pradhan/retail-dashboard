@@ -1,109 +1,62 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ExploreService } from '../../explore.service';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { EChartsOption } from 'echarts';
+import { ScatterPlotData } from 'src/app/interfaces/chart.interfaces';
 
 @Component({
   selector: 'app-scatter-plot',
   templateUrl: './scatter-plot.component.html',
   styleUrls: ['../bar-chart/bar-chart.component.scss'],
 })
-export class ScatterPlotComponent implements OnInit, OnDestroy {
-  chartData: any;
-  responseData: any = {};
-  param: any;
-  sub!: Subscription;
-  constructor(private exportService: ExploreService) {}
-  loader: boolean = true;
-  @Input() params: any;
-  chartName: any;
-  @Input() chartId!: string;
-  @Input() reportId!: string;
+export class ScatterPlotComponent implements OnInit, OnChanges {
+  @Input() chartData!: ScatterPlotData;
+  @Input() animated = false;
+  _chartOption: EChartsOption = {};
+
+  constructor() { }
+
   ngOnInit(): void {
-    this.sub = this.params.subscribe((res: any) => {
-      this.param = res;
-      this.getChartData();
-    });
+    this.loadChart()
   }
 
-  getChartData() {
-    this.loader = true;
-    this.chartData = [];
-    this.param['chart_id'] = this.chartId;
-    this.param['report_id'] = this.reportId;
-    this.exportService.getReportData(this.param).subscribe({
-      next: (res: any) => {
-        this.responseData = res;
-        if (res.data !== null) {
-          this.loader = false;
-          let newObj = {};
-          this.chartData = [];
-          let series: any;
-          let lables: any[] = [];
-          let reportData = res.data[0].report_data[0].data;
-          this.chartName = res.data[0].report_data[0].title;
-          for (const key in reportData) {
-            series = [];
-            newObj = {
-              legend: {
-                data: [],
-                left: 'center',
-                bottom: 10,
-              },
-              xAxis: [
-                {
-                  type: 'value',
-                  scale: true,
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadChart();
+  }
 
-                  splitLine: {
-                    show: false,
-                  },
-                },
-              ],
-              yAxis: [
-                {
-                  type: 'value',
-                  scale: true,
-
-                  splitLine: {
-                    show: false,
-                  },
-                },
-              ],
-            };
-            let dataArray: any = [];
-            if (key === 'labels') {
-              reportData[key].forEach((element: any) => {
-                if (lables.indexOf(element) === -1) {
-                  lables.push(element);
-                }
-              });
-              lables.forEach((e: any) => {
-                dataArray = [];
-                reportData.labels.forEach((element: string | number, idx: any) => {
-                  if (element === e) {
-                    dataArray.push([reportData['pc1'][idx], reportData['pc2'][idx]]);
-                  }
-                });
-                newObj['legend'].data.push(e.toString());
-                let obj = {};
-                obj = {
-                  name: e.toString(),
-                  type: 'scatter',
-                  symbolSize: 2,
-                  data: dataArray,
-                };
-                series.push(obj);
-              });
-              newObj['series'] = series;
+  private loadChart() {
+    if (this.chartData) {
+      this._chartOption = {
+        xAxis: {
+          type: this.chartData.xAxis.type,
+          name: this.chartData.xAxis.name,
+          nameLocation: this.chartData.xAxis.nameLocation,
+          min: this.chartData.xAxis.min,
+          nameGap: 30,
+        },
+        yAxis: {
+          type: this.chartData.yAxis.type,
+          name: this.chartData.yAxis.name,
+          nameLocation: this.chartData.yAxis.nameLocation,
+          min: this.chartData.yAxis.min,
+          nameGap: 70,
+        },
+        tooltip: {
+          position: 'top'
+        },
+        series: [
+          {
+            symbolSize: 20,
+            data: this.chartData.values,
+            encode: { tooltip: [0, 1] },
+            type: 'scatter',
+            animationDelay: (idx: number) => {
+              if (this.animated)
+                return idx * 10;
+              else
+                return 0;
             }
           }
-          this.chartData.push(newObj);
-        }
-      },
-      error: (error: any) => {},
-    });
-  }
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
+        ]
+      };
+    }
   }
 }

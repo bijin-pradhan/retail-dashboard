@@ -1,61 +1,87 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { EChartsOption } from 'echarts';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { EChartsOption, SeriesOption } from 'echarts';
+import { ChartData } from 'src/app/interfaces/chart.interfaces';
 
 @Component({
   selector: 'app-area-chart',
   templateUrl: './area-chart.component.html',
   styleUrls: ['./area-chart.component.scss']
 })
-export class AreaChartComponent implements OnInit {
-  @Input() chartUrl = '';
-  private myChart: any = null;
-  private showLegend: boolean = true;
+export class AreaChartComponent implements OnInit, OnChanges {
+  @Input() chartData!: ChartData;
+  @Input() animated = false;
   _chartOption: EChartsOption = {};
 
   constructor() { }
 
   ngOnInit() {
-    let data = [820, 932, 901, 934, 1290, 1330, 1320];
-    if (this.chartUrl === 'first') {
-      data = [820, 932, 901, 934, 990, 930, 920];
-      this.showLegend = false;
-    }
-    if (this.chartUrl === 'second') {
-      data = [20, 32, 41, 34, 50, 30, 20];
-      this.showLegend = false;
-    }
-    if (this.chartUrl === 'third') {
-      data = [1820, 1932, 1901, 1934, 1990, 1930, 1920];
-      this.showLegend = false;
-    }
-    console.log(this.chartUrl, this.showLegend);
-    this.loadChart(data);
+    this.loadChart();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadChart();
+  }
 
-  private loadChart(data: any): void {
+  private loadChart(): void {
+    var xAxisData = [];
+    var values: number[][] = [];
+    var names: string[] = [];
 
-    this._chartOption = {
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        //show: this.showLegend
-      },
-      yAxis: {
-        type: 'value',
-        //show: this.showLegend
-      },
-      series: [
-        {
-          data: data,
+    if (this.chartData) {
+      let data = this.chartData;
+      xAxisData = data.xAxisData;
+      values = data.values;
+      names = data.names;
+
+      const s: SeriesOption[] = [];
+      for (let i = 0; i < values.length; i++) {
+        s.push({
+          name: names[i],
           type: 'line',
+          data: values[i],
           areaStyle: {},
-          smooth: true
-        }
-      ]
-    };
+          animationDelay: (idx: number) => {
+            if (this.animated)
+              return idx * 10 + i
+            else
+              return 0;
+          }
+        })
+      }
 
+      // only select the first key
+      // rest are hidden
+      let selected: { [id: string]: boolean } = {};
+      for (let name of names) {
+        selected[name] = false
+      }
+
+      selected[names[0]] = true
+
+      this._chartOption = {
+        legend: {
+          data: names,
+          selected: selected,
+          align: 'left',
+        },
+        tooltip: {},
+        xAxis: {
+          data: xAxisData,
+          silent: false,
+          splitLine: {
+            show: false,
+          },
+        },
+        yAxis: {},
+        series: s,
+        animationEasing: 'elasticOut',
+        animationDelayUpdate: (idx: number) => {
+          if (this.animated)
+            return idx * 5
+          else
+            return 0;
+        },
+      };
+    }
   }
-
 }

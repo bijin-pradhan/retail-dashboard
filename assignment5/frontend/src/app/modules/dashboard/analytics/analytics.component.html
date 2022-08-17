@@ -42,7 +42,7 @@
                 </div>
                 <div class="flex flex-col flex-auto mt-3">
                     <mat-spinner *ngIf="!animatedChartData" class="mx-auto my-50"></mat-spinner>
-                    <app-charts [chartType]="'area-chart-animated'" [chartUrl]="animatedChartData"
+                    <app-charts [chartType]="'bar-chart-animated'" [chartData]="animatedChartData"
                         *ngIf="animatedChartData">
                     </app-charts>
                 </div>
@@ -140,11 +140,12 @@
                     </div>
                 </div>
                 <div class="flex flex-col flex-auto h-70 w-auto">
-                    <ng-container *ngIf="heatmapData | async as heatmap">
-                        <app-charts [chartType]="'heatmap'" [chartUrl]="heatmap"></app-charts>
+                    <ng-container *ngIf="(heatmapData | async)?.corr as heatmap">
+                        <app-charts [chartType]="'heatmap'" [chartData]="heatmap"></app-charts>
                     </ng-container>
                 </div>
             </div>
+
             <!-- Internet Users and Population Treemap -->
             <div class="col-span-1 dark flex flex-col flex-auto bg-slate-400 shadow rounded-2xl overflow-hidden">
                 <div class="flex items-start justify-between m-6 mb-0">
@@ -166,7 +167,77 @@
                 </div>
                 <div class="flex flex-col flex-auto h-70 w-auto">
                     <mat-spinner *ngIf="!treemapData" class="m-auto"></mat-spinner>
-                    <app-charts [chartType]="'treemap'" [chartUrl]="treemapData" *ngIf="treemapData"></app-charts>
+                    <app-charts [chartType]="'treemap'" [chartData]="treemapData" *ngIf="treemapData"></app-charts>
+                </div>
+            </div>
+
+            <!-- Scatter plot -->
+            <div
+                class="sm:col-span-2 lg:col-span-3 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">
+                            {{scatterPlotOption}} vs Average Internet Speed
+                        </div>
+                    </div>
+                    <div class="ml-2">
+                        <button class="h-6 min-h-6 px-2 rounded-full bg-hover" mat-button
+                            [matMenuTriggerFor]="scatterMenu">
+                            <span class="font-medium text-sm text-secondary">{{scatterPlotOption}}</span>
+                        </button>
+                        <mat-menu #scatterMenu="matMenu">
+                            <button mat-menu-item (click)="onClickScatter('Population')">Population</button>
+                            <button mat-menu-item (click)="onClickScatter('Internet Users')">Internet Users</button>
+                        </mat-menu>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto mt-3">
+                    <mat-spinner *ngIf="!scatterPlotData" class="mx-auto my-50"></mat-spinner>
+                    <app-charts [chartType]="'scatter-plot-animated'" [chartData]="scatterPlotData"
+                        *ngIf="scatterPlotData">
+                    </app-charts>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Other charts -->
+        <div class="flex items-left flex-col w-full mt-10">
+            <div class="text-3xl text-gray-500 font-semibold tracking-tight leading-8">Other Charts</div>
+            <div class="font-medium tracking-tight text-gray-500">These are just here as examples of some of the
+                other
+                charts implemented.</div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-8">
+            <div
+                class="sm:col-span-2 lg:col-span-3 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">Area chart
+                        </div>
+                        <div class="font-medium text-secondary">Same data as bar chart at top.</div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto mt-3">
+                    <mat-spinner *ngIf="!animatedChartData" class="mx-auto my-50"></mat-spinner>
+                    <app-charts [chartType]="'area-chart-animated'" [chartData]="animatedChartData"
+                        *ngIf="animatedChartData">
+                    </app-charts>
+                </div>
+            </div>
+            <div
+                class="sm:col-span-2 lg:col-span-3 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">Pie chart
+                        </div>
+                        <div class="font-medium text-secondary">Population data</div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto mt-3">
+                    <app-charts [chartType]="'pie-chart-animated'" [chartData]="piechartData"
+                        *ngIf="piechartData.length">
+                    </app-charts>
                 </div>
             </div>
         </div>

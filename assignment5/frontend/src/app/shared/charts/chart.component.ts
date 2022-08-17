@@ -6,8 +6,7 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './chart.component.html'
 })
 export class ChartComponent implements OnInit {
-  private myChart: any = null;
-  @Input() chartUrl: any = null;
+  @Input() chartData: any = null;
   @Input() chartType: any = '';
   constructor() { }
 

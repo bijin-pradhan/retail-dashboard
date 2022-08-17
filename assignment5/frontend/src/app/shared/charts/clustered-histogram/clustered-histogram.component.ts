@@ -1,91 +1,89 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ExploreService } from '../../explore.service';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { EChartsOption, SeriesOption } from 'echarts';
+import { ChartData } from 'src/app/interfaces/chart.interfaces';
 
 @Component({
   selector: 'app-clustered-histogram',
   templateUrl: './clustered-histogram.component.html',
   styleUrls: ['../bar-chart/bar-chart.component.scss'],
 })
-export class ClusteredHistogramComponent implements OnInit, OnDestroy {
-  chartName: any;
-  responseData: any = {};
-  param: any;
-  sub!: Subscription;
-  constructor(private exportService: ExploreService) {}
-  loader: boolean = true;
-  @Input() params: any;
-  @Input() chartId!: string;
-  @Input() reportId!: string;
-  chartData: any;
+export class ClusteredHistogramComponent implements OnInit, OnChanges {
+  @Input() chartData!: ChartData;
+  @Input() animated = false;
+  _chartOption: EChartsOption = {};
+
+  constructor() {
+
+  }
+
   ngOnInit(): void {
-    this.sub = this.params.subscribe((res: any) => {
-      this.param = res;
-      this.getChartData();
-    });
+    this.loadChart();
   }
-  getChartData() {
-    this.loader = true;
-    this.param['chart_id'] = this.chartId;
-    this.param['report_id'] = this.reportId;
-    this.chartData = [];
-    this.exportService.getReportData(this.param).subscribe({
-      next: (res: any) => {
-        this.responseData = res;
-        if (res.data !== null) {
-          this.loader = false;
-          this.chartData = [];
-          let newObj = {};
-          res.data[0].report_data.forEach((ele: any, i: any) => {
-            let index = i + 1;
-            this.chartName = ele.title;
-            newObj = {
-              tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                  type: 'shadow',
-                },
-              },
-              title: {
-                mainType: 'title',
-                subtext: 'Plot ' + index + '- ' + ele.sub_title,
-                textAlign: 'left',
-                subtextStyle: { fontWeight: 'lighter' },
-              },
-              xAxis: {
-                type: 'category',
-                data: ele.category,
-                name: ele.labelX,
-                nameLocation: 'middle',
-                nameGap: 50,
-                axisLabel: {
-                  fontSize: '10px',
-                },
-              },
-              yAxis: {
-                type: 'value',
-                name: ele.labelY,
-                nameLocation: 'middle',
-                nameGap: 40,
-                axisLabel: {
-                  fontSize: '10px',
-                },
-              },
-              series: [
-                {
-                  data: ele.data,
-                  type: 'bar',
-                },
-              ],
-            };
-            this.chartData.push(newObj);
-          });
-        }
-      },
-      error: (error: any) => {},
-    });
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadChart();
   }
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
+
+  private loadChart() {
+    var xAxisData = [];
+    var values: number[][] = [];
+    var names: string[] = [];
+
+    if (this.chartData) {
+      let data = this.chartData;
+      xAxisData = data.xAxisData;
+      values = data.values;
+      names = data.names;
+
+      const s: SeriesOption[] = [];
+      for (let i = 0; i < values.length; i++) {
+        s.push({
+          name: names[i],
+          type: 'line',
+          data: values[i],
+          areaStyle: {},
+          animationDelay: (idx: number) => {
+            if (this.animated)
+              return idx * 10 + i
+            else
+              return 0;
+          }
+        })
+      }
+
+      // only select the first key
+      // rest are hidden
+      let selected: { [id: string]: boolean } = {};
+      for (let name of names) {
+        selected[name] = false
+      }
+
+      selected[names[0]] = true
+
+      this._chartOption = {
+        legend: {
+          data: names,
+          selected: selected,
+          align: 'left',
+        },
+        tooltip: {},
+        xAxis: {
+          data: xAxisData,
+          silent: false,
+          splitLine: {
+            show: false,
+          },
+        },
+        yAxis: {},
+        series: s,
+        animationEasing: 'elasticOut',
+        animationDelayUpdate: (idx: number) => {
+          if (this.animated)
+            return idx * 5
+          else
+            return 0;
+        },
+      };
+    }
   }
 }

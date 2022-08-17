@@ -1,13 +1,15 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';  
+import { CommonModule } from '@angular/common';
 import { ChartComponent } from './chart.component';
-import { PieChartComponent } from './pie-chart/pie-chart.component';
-import { BarChartComponent } from './bar-chart/bar-chart.component';
-import { AreaChartAnimatedComponent } from './area-chart-animated/area-chart-animated.component';
 import { AreaChartComponent } from './area-chart/area-chart.component';
-import { NgxEchartsModule } from 'ngx-echarts';
+import { BarChartComponent } from './bar-chart/bar-chart.component';
+import { ClusteredBarComponent } from './clustered-bar/clustered-bar.component';
+import { ClusteredHistogramComponent } from './clustered-histogram/clustered-histogram.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
+import { PieChartComponent } from './pie-chart/pie-chart.component';
+import { ScatterPlotComponent } from './scatter-plot/scatter-plot.component';
 import { TreemapComponent } from './treemap/treemap.component';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 @NgModule({
   imports: [
@@ -21,13 +23,15 @@ import { TreemapComponent } from './treemap/treemap.component';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [
-    ChartComponent,
-    PieChartComponent,
-    BarChartComponent,
     AreaChartComponent,
-    AreaChartAnimatedComponent,
+    BarChartComponent,
+    ClusteredBarComponent,
+    ClusteredHistogramComponent,
+    ChartComponent,
     HeatmapComponent,
-    TreemapComponent
+    PieChartComponent,
+    ScatterPlotComponent,
+    TreemapComponent,
   ]
 })
 export class ChartModule {

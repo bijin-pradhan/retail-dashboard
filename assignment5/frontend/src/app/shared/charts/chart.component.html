@@ -1,18 +1,54 @@
-<div *ngIf="chartType==='pie-chart'">
-    <app-pie-chart [chartUrl]="chartUrl"></app-pie-chart>
-</div>
-<div *ngIf="chartType==='bar-chart'">
-    <app-bar-chart [chartUrl]="chartUrl"></app-bar-chart>
+<!-- area charts -->
+<div *ngIf="chartType==='area-chart'">
+    <app-area-chart [chartData]="chartData"></app-area-chart>
 </div>
 <div *ngIf="chartType==='area-chart-animated'">
-    <app-area-chart-animated [chartUrl]="chartUrl"></app-area-chart-animated>
+    <app-area-chart [chartData]="chartData" [animated]="true"></app-area-chart>
 </div>
-<div *ngIf="chartType==='area-chart'">
-    <app-area-chart [chartUrl]="chartUrl"></app-area-chart>
+
+<!-- bar charts -->
+<div *ngIf="chartType==='bar-chart'">
+    <app-bar-chart [chartData]="chartData"></app-bar-chart>
 </div>
+<div *ngIf="chartType==='bar-chart-animated'">
+    <app-bar-chart [chartData]="chartData" [animated]="true"></app-bar-chart>
+</div>
+
+<!-- clustered bar charts -->
+<div *ngIf="chartType==='clustered-bar-chart'">
+    <app-clustered-bar [chartData]="chartData"></app-clustered-bar>
+</div>
+<div *ngIf="chartType==='clustered-bar-chart-animated'">
+    <app-clustered-bar [chartData]="chartData" [animated]="true"></app-clustered-bar>
+</div>
+
+<!-- clustered histogram -->
+<div *ngIf="chartType==='clustered-histogram'">
+    <app-clustered-histogram [chartData]="chartData"></app-clustered-histogram>
+</div>
+
+<!-- heatmap -->
 <div *ngIf="chartType=='heatmap'">
-    <app-heatmap [chartUrl]="chartUrl"></app-heatmap>
+    <app-heatmap [chartData]="chartData"></app-heatmap>
 </div>
+
+<!-- pie chart -->
+<div *ngIf="chartType==='pie-chart'">
+    <app-pie-chart [chartData]="chartData"></app-pie-chart>
+</div>
+<div *ngIf="chartType==='pie-chart-animated'">
+    <app-pie-chart [chartData]="chartData" [animated]="true"></app-pie-chart>
+</div>
+
+<!-- scatter plot -->
+<div *ngIf="chartType==='scatter-plot'">
+    <app-scatter-plot [chartData]="chartData"></app-scatter-plot>
+</div>
+<div *ngIf="chartType==='scatter-plot-animated'">
+    <app-scatter-plot [chartData]="chartData" [animated]="true"></app-scatter-plot>
+</div>
+
+<!-- treemap -->
 <div *ngIf="chartType=='treemap'">
-    <app-treemap [chartUrl]="chartUrl"></app-treemap>
+    <app-treemap [chartData]="chartData"></app-treemap>
 </div>

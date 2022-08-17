@@ -118,7 +118,7 @@ def group_by_region():
         'Average Number of Plans',
         'Most Expensive 1GB',
         'Cheapest 1GB',
-        r'% of Population that uses internet'
+        r'% of Population that uses Internet'
     ]
     
     regions = []
@@ -136,7 +136,7 @@ def group_by_region():
         values[6].append((users/pop) * 100 if users and pop else 0)
         internet_users.append(users)
         population.append(pop)
-
+        
     return {
         'names': names,
         'regions': regions,

@@ -1,81 +1,66 @@
-import { Component, OnInit, Input } from '@angular/core';
-import {  EChartsOption } from 'echarts';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { EChartsOption } from 'echarts';
+import { NameValuePair } from 'src/app/interfaces/chart.interfaces';
 
 @Component({
   selector: 'app-pie-chart',
   templateUrl: './pie-chart.component.html',
   styleUrls: ['./pie-chart.component.scss']
 })
-export class PieChartComponent implements OnInit {
-    @Input() chartUrl = '';
-    _chartOption:EChartsOption = {};
+export class PieChartComponent implements OnInit, OnChanges {
+  @Input() chartData!: NameValuePair[];
+  @Input() animated = false;
+  _chartOption: EChartsOption = {};
 
-    constructor() {
-      
-   }
+  constructor() {
 
-    ngOnInit() {
-        this.InitPipe()
-    }
+  }
 
-    private InitPipe(): void {
-      var inx = 2;
-      if (this.chartUrl === 'first') {
-          inx = 3;
+  ngOnInit() {
+    this.loadChart();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadChart();
+  }
+
+  private loadChart(): void {
+    if (this.chartData) {
+      // TODO: fix this jank setup
+      // directly passing data from analytics component breaks chart
+      let d = []
+      for (let item of this.chartData) {
+        d.push({ value: item.value, name: item.name })
       }
-      if (this.chartUrl === 'second') {
-        inx = 4;
-      }
-      if (this.chartUrl === 'third') {
-        inx = 5;
-      }
-      
-    
-        this._chartOption = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
+      this._chartOption = {
         legend: {
-            //selectedMode: false,
-            orient: 'vertical',
-            //x: 'left',
-            data:['elem1','elem2','elem3','elem4','elem5'].slice(0, inx)
-            },
-            
-        xAxis: {
-                type: 'category',
-                axisTick: {
-                  alignWithLabel: true
-                }
-              },
-              yAxis: {
-                type: 'value'
-              },
+          orient: 'vertical',
+          left: 'left',
+          // fix the font color too
+          backgroundColor: 'white'
+        },
         series: [
-            {
-                name:'NOMBRE',
-                type:'pie',
-                radius: ['50%', '70%'],
-                avoidLabelOverlap: false,
-                data:[
-                    {value:335, name:'elem1'},
-                    {value:310, name:'elem2'},
-                    {value:234, name:'elem3'},
-                    {value:135, name:'elem4'},
-                    {value:1548, name:'elem5'}
-                ].slice(0, inx)
-            }
-            ],
-        
-        grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true  
+          {
+            name: 'Pie chart',
+            type: 'pie',
+            radius: '50%',
+            data: d,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
             },
-        
-    
-        };
+            animationDelay: (idx: number) => {
+              if (this.animated)
+                return idx * 10;
+              else
+                return 0;
+            }
+          }
+        ]
+      }
+    }
   }
 }

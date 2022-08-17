@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EChartsOption, SeriesOption } from 'echarts';
-import { HeatmapData } from 'src/app/interfaces/data.interface';
+import { EChartsOption } from 'echarts';
+import { HeatmapData } from 'src/app/interfaces/chart.interfaces';
 @Component({
   selector: 'app-heatmap',
   templateUrl: './heatmap.component.html',
   styleUrls: ['./heatmap.component.scss']
 })
 export class HeatmapComponent implements OnInit, OnChanges {
-  @Input() chartUrl: any;
+  @Input() chartData: any;
   _chartOption: EChartsOption = {};
 
   constructor() { }
@@ -17,12 +17,12 @@ export class HeatmapComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.loadChart()
+    this.loadChart();
   }
 
   loadChart(): void {
-    if (this.chartUrl) {
-      this.chartUrl = this.chartUrl as HeatmapData
+    if (this.chartData) {
+      this.chartData = this.chartData as HeatmapData
       this._chartOption = {
         tooltip: {
           position: 'top'
@@ -35,14 +35,14 @@ export class HeatmapComponent implements OnInit, OnChanges {
         },
         xAxis: {
           type: 'category',
-          data: this.chartUrl.corr.xAxisData,
+          data: this.chartData.xAxisData,
           splitArea: {
             show: true
           }
         },
         yAxis: {
           type: 'category',
-          data: this.chartUrl.corr.yAxisData,
+          data: this.chartData.yAxisData,
           axisLabel: {
             show: true,
             rotate: 45,
@@ -65,7 +65,7 @@ export class HeatmapComponent implements OnInit, OnChanges {
           {
             name: 'Correlation',
             type: 'heatmap',
-            data: this.chartUrl.corr.seriesData,
+            data: this.chartData.seriesData,
             label: {
               show: false
             },

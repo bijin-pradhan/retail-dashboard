@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { TreemapData } from 'src/app/interfaces/data.interface';
+import { TreemapData } from 'src/app/interfaces/chart.interfaces';
 
 @Component({
   selector: 'app-treemap',
@@ -8,7 +8,7 @@ import { TreemapData } from 'src/app/interfaces/data.interface';
   styleUrls: ['./treemap.component.scss']
 })
 export class TreemapComponent implements OnInit, OnChanges {
-  @Input() chartUrl: any;
+  @Input() chartData: any;
   _chartOption: EChartsOption = {};
 
   constructor() { }
@@ -22,19 +22,19 @@ export class TreemapComponent implements OnInit, OnChanges {
   }
 
   loadChart() {
-    if (this.chartUrl) {
-      this.chartUrl = this.chartUrl as TreemapData
+    if (this.chartData) {
+      this.chartData = this.chartData as TreemapData
       let d = []
-      for (let i = 0; i < this.chartUrl.names.length; i++) {
+      for (let i = 0; i < this.chartData.names.length; i++) {
         d.push({
-          name: this.chartUrl.names[i],
-          value: this.chartUrl.values[i]
+          name: this.chartData.names[i],
+          value: this.chartData.values[i]
         })
       }
       this._chartOption = {
         series: [{
           type: 'treemap',
-          data: d
+          data: d,
         }]
       }
     }
