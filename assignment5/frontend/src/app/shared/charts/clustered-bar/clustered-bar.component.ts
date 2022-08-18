@@ -1,0 +1,89 @@
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { EChartsOption, SeriesOption } from 'echarts';
+import { ChartData } from 'src/app/interfaces/chart.interfaces';
+
+@Component({
+  selector: 'app-clustered-bar',
+  templateUrl: './clustered-bar.component.html',
+  styleUrls: ['../bar-chart/bar-chart.component.scss'],
+})
+export class ClusteredBarComponent implements OnInit, OnChanges {
+  @Input() animated = false;
+  @Input() chartData!: ChartData;
+  _chartOption: EChartsOption = {};
+
+  constructor() {
+  }
+
+  ngOnInit() {
+    this.loadChart();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadChart();
+  }
+
+  private loadChart(): void {
+    var xAxisData = [];
+    var values: number[][] = [];
+    var names: string[] = [];
+
+    if (this.chartData) {
+      let data = this.chartData;
+      xAxisData = data.xAxisData;
+      values = data.values;
+      names = data.names;
+
+      const s: SeriesOption[] = [];
+      for (let i = 0; i < values.length; i++) {
+        s.push({
+          name: names[i],
+          type: 'bar',
+          stack: 'total',
+          stackStrategy: 'samesign',
+          data: values[i],
+          animationDelay: (idx: number) => {
+            if (this.animated)
+              return idx * 10 + i
+            else
+              return 0;
+          }
+        })
+      }
+
+      // only select the first key
+      // rest are hidden
+      let selected: { [id: string]: boolean } = {};
+      for (let name of names) {
+        selected[name] = false
+      }
+
+      selected[names[0]] = true
+
+      this._chartOption = {
+        legend: {
+          data: names,
+          selected: selected,
+          align: 'left',
+        },
+        tooltip: {},
+        xAxis: {
+          data: xAxisData,
+          silent: false,
+          splitLine: {
+            show: false,
+          },
+        },
+        yAxis: {},
+        series: s,
+        animationEasing: 'elasticOut',
+        animationDelayUpdate: (idx: number) => {
+          if (this.animated)
+            return idx * 5
+          else
+            return 0;
+        },
+      };
+    }
+  }
+}

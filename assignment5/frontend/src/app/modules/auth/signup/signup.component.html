@@ -1,0 +1,64 @@
+<form class="mt-8" [formGroup]="signInForm" #signInNgForm="ngForm">
+
+    <!-- Email field -->
+    <mat-form-field class="w-full">
+        <mat-label>Email address</mat-label>
+        <input id="email" matInput [formControlName]="'email'">
+        <mat-error *ngIf="signInForm.get('email')?.hasError('required')">
+            Email address is required
+        </mat-error>
+        <mat-error *ngIf="signInForm.get('email')?.hasError('email')">
+            Please enter a valid email address
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Password field -->
+    <mat-form-field class="w-full">
+        <mat-label>Password</mat-label>
+        <input id="password" matInput type="password" [formControlName]="'password'" #passwordField>
+        <button mat-icon-button type="button"
+            (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
+            matSuffix>
+            <mat-icon matSuffix>visibility</mat-icon>
+        </button>
+        <mat-error>
+            Password is required
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Actions -->
+    <div class="inline-flex items-end justify-between w-full mt-1.5">
+        <mat-checkbox [formControlName]="'rememberMe'">
+            Remember me
+        </mat-checkbox>
+        <a class="text-md font-medium text-primary hover:underline">Forgot password?
+        </a>
+    </div>
+
+    <!-- Submit button -->
+    <button class="tiger-mat-button-large w-full mt-6 bg-primary text-gray-50" mat-flat-button
+        [disabled]="signInForm.disabled" (click)="signIn()">
+        <span *ngIf="!signInForm.disabled">
+            Sign in
+        </span>
+        <mat-progress-spinner *ngIf="signInForm.disabled" [diameter]="24" [mode]="'indeterminate'">
+        </mat-progress-spinner>
+    </button>
+
+    <!-- Separator -->
+    <div class="flex items-center mt-8">
+        <div class="flex-auto mt-px border-t"></div>
+        <div class="mx-2 text-secondary">Or continue with</div>
+        <div class="flex-auto mt-px border-t"></div>
+    </div>
+
+    <!-- SSO button -->
+    <button class="tiger-mat-button-large w-full mt-6 bg-accent" mat-flat-button [color]="'accent'"
+        [disabled]="signInForm.disabled" (click)="signIn()">
+        <span *ngIf="!signInForm.disabled">
+            Sign in with SSO
+        </span>
+        <mat-progress-spinner *ngIf="signInForm.disabled" [diameter]="24" [mode]="'indeterminate'">
+        </mat-progress-spinner>
+    </button>
+</form>

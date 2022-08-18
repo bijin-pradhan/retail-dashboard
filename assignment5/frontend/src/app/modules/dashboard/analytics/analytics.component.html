@@ -1,0 +1,244 @@
+<div class="flex flex-col flex-auto w-full">
+    <div class="flex flex-wrap w-full max-w-screen-xl mx-auto p-6 md:p-8">
+        <!-- Title and action buttons -->
+        <div class="flex items-center justify-between w-full">
+            <div>
+                <div class="text-3xl text-gray-500 font-semibold tracking-tight leading-8">Analytics dashboard</div>
+                <div class="font-medium tracking-tight text-gray-500">Monitor metrics, check reports and review
+                    performance</div>
+            </div>
+            <div class="flex items-center ml-6">
+                <button class="hidden sm:inline-flex" mat-flat-button [color]="'accent'">
+                    <mat-icon class="icon-size-5">settings</mat-icon>
+                    <span class="ml-2">Settings</span>
+                </button>
+                <button class="hidden sm:inline-flex ml-3" mat-flat-button [color]="'primary'">
+                    <mat-icon class="icon-size-5">save</mat-icon>
+                    <span class="ml-2">Export</span>
+                </button>
+                <!-- Actions menu (visible on xs) -->
+                <div class="sm:hidden">
+                    <button [matMenuTriggerFor]="actionsMenu" mat-icon-button>
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #actionsMenu="matMenu">
+                        <button mat-menu-item>Export</button>
+                        <button mat-menu-item>Settings</button>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-8">
+            <!-- Regions Overview -->
+            <div
+                class="sm:col-span-2 lg:col-span-3 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">Regions Overview
+                        </div>
+                        <div class="font-medium text-secondary">Averages by Region</div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto mt-3">
+                    <mat-spinner *ngIf="!animatedChartData" class="mx-auto my-50"></mat-spinner>
+                    <app-charts [chartType]="'bar-chart-animated'" [chartData]="animatedChartData"
+                        *ngIf="animatedChartData">
+                    </app-charts>
+                </div>
+            </div>
+
+            <ng-container *ngIf="averagesData | async as averages; else loading">
+                <!-- Average Speed -->
+                <div
+                    class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-slate-400 shadow rounded-2xl overflow-hidden">
+                    <div class="flex items-start justify-between m-6 mb-0">
+                        <div class="text-lg font-medium tracking-tight leading-6 truncate">Average Speed</div>
+                    </div>
+                    <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+                        <mat-spinner *ngIf="!averages" class="m-auto"></mat-spinner>
+                        <div class="text-7xl font-bold tracking-tighter leading-tight pb-6">
+                            {{averages.avg_speed}} Mb/s
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avg Prices -->
+                <div class="flex flex-col flex-auto bg-slate-500 shadow rounded-2xl overflow-hidden">
+                    <div class="flex items-start justify-between m-6 mb-0">
+                        <div class="text-lg font-medium tracking-tight leading-6 truncate">Average Price of 1GB </div>
+                        <div class="ml-2">
+                            <button class="h-6 min-h-6 px-2 rounded-full bg-hover" mat-button
+                                [matMenuTriggerFor]="avgPriceMenu">
+                                <span class="font-medium text-sm text-secondary">{{avgPriceYear}}</span>
+                            </button>
+                            <mat-menu #avgPriceMenu="matMenu">
+                                <button mat-menu-item
+                                    (click)="avgPriceYear=2022; curAvg=averages.avg_prices['2022']">2022</button>
+                                <button mat-menu-item
+                                    (click)="avgPriceYear=2021; curAvg=averages.avg_prices['2021']">2021</button>
+                                <button mat-menu-item
+                                    (click)="avgPriceYear=2020; curAvg=averages.avg_prices['2020']">2020</button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                    <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+                        <div class="text-7xl font-bold tracking-tighter leading-tight"> ${{ curAvg ? curAvg :
+                            averages.avg_prices['2022']
+                            }}
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-template #loading>
+                <mat-spinner class="m-auto"></mat-spinner>
+            </ng-template>
+
+            <!-- Changes -->
+            <ng-container *ngIf="(changesData | async)?.changes as changes">
+                <div class="flex flex-col flex-auto bg-slate-600 shadow rounded-2xl overflow-hidden">
+                    <div class="flex items-start justify-between m-6 mb-0">
+                        <div class="text-lg font-medium tracking-tight leading-6 truncate"> Change in Average Price
+                        </div>
+                        <div class="ml-2">
+                            <button class="h-6 min-h-6 px-2 rounded-full bg-hover" mat-button
+                                [matMenuTriggerFor]="changeMenu">
+                                <span class="font-medium text-sm text-secondary">{{changeYear}}</span>
+                            </button>
+                            <mat-menu #changeMenu="matMenu">
+                                <button (click)="changeYear='2020 to 2021'; curChange=changes['change_20_21']"
+                                    mat-menu-item>
+                                    2020 to 2021
+                                </button>
+                                <button (click)="changeYear='2021 to 2022'; curChange=changes['change_21_22']"
+                                    mat-menu-item>
+                                    2021 to 2022
+                                </button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                    <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+                        <div class="text-7xl font-bold tracking-tighter leading-tight"> ${{
+                            curChange ? curChange : changes['change_20_21']
+                            }}</div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-8 sm:grid-cols-2 lg:grid-cols-3">
+            <!-- Correlation Heatmap -->
+            <div class="sm:col-span-2 lg:col-span-2 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl
+            overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">Correlation
+                            Heatmap
+                        </div>
+                        <div class="font-medium text-secondary">Correlation between different attributes</div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto h-70 w-auto">
+                    <ng-container *ngIf="(heatmapData | async)?.corr as heatmap">
+                        <app-charts [chartType]="'heatmap'" [chartData]="heatmap"></app-charts>
+                    </ng-container>
+                </div>
+            </div>
+
+            <!-- Internet Users and Population Treemap -->
+            <div class="col-span-1 dark flex flex-col flex-auto bg-slate-400 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-start justify-between m-6 mb-0">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate"> Population Demographics </div>
+                    <div class="ml-2">
+                        <button class="h-6 min-h-6 px-2 rounded-full bg-hover" mat-button
+                            [matMenuTriggerFor]="demographicsMenu">
+                            <span class="font-medium text-sm text-secondary">{{demographicsOption}}</span>
+                        </button>
+                        <mat-menu #demographicsMenu="matMenu">
+                            <button (click)="onClickDemo('Population')" mat-menu-item>
+                                Population
+                            </button>
+                            <button (click)="onClickDemo('Internet Users')" mat-menu-item>
+                                Internet Users
+                            </button>
+                        </mat-menu>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto h-70 w-auto">
+                    <mat-spinner *ngIf="!treemapData" class="m-auto"></mat-spinner>
+                    <app-charts [chartType]="'treemap'" [chartData]="treemapData" *ngIf="treemapData"></app-charts>
+                </div>
+            </div>
+
+            <!-- Scatter plot -->
+            <div
+                class="sm:col-span-2 lg:col-span-3 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">
+                            {{scatterPlotOption}} vs Average Internet Speed
+                        </div>
+                    </div>
+                    <div class="ml-2">
+                        <button class="h-6 min-h-6 px-2 rounded-full bg-hover" mat-button
+                            [matMenuTriggerFor]="scatterMenu">
+                            <span class="font-medium text-sm text-secondary">{{scatterPlotOption}}</span>
+                        </button>
+                        <mat-menu #scatterMenu="matMenu">
+                            <button mat-menu-item (click)="onClickScatter('Population')">Population</button>
+                            <button mat-menu-item (click)="onClickScatter('Internet Users')">Internet Users</button>
+                        </mat-menu>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto mt-3">
+                    <mat-spinner *ngIf="!scatterPlotData" class="mx-auto my-50"></mat-spinner>
+                    <app-charts [chartType]="'scatter-plot-animated'" [chartData]="scatterPlotData"
+                        *ngIf="scatterPlotData">
+                    </app-charts>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Other charts -->
+        <div class="flex items-left flex-col w-full mt-10">
+            <div class="text-3xl text-gray-500 font-semibold tracking-tight leading-8">Other Charts</div>
+            <div class="font-medium tracking-tight text-gray-500">These are just here as examples of some of the
+                other
+                charts implemented.</div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-8">
+            <div
+                class="sm:col-span-2 lg:col-span-3 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">Area chart
+                        </div>
+                        <div class="font-medium text-secondary">Same data as bar chart at top.</div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto mt-3">
+                    <mat-spinner *ngIf="!animatedChartData" class="mx-auto my-50"></mat-spinner>
+                    <app-charts [chartType]="'area-chart-animated'" [chartData]="animatedChartData"
+                        *ngIf="animatedChartData">
+                    </app-charts>
+                </div>
+            </div>
+            <div
+                class="sm:col-span-2 lg:col-span-3 dark flex flex-col flex-auto bg-slate-300 shadow rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between mt-10 ml-10 mr-6 sm:mr-10">
+                    <div class="flex flex-col">
+                        <div class="mr-4 text-2xl md:text-3xl font-semibold tracking-tight leading-7">Pie chart
+                        </div>
+                        <div class="font-medium text-secondary">Population data</div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-auto mt-3">
+                    <app-charts [chartType]="'pie-chart-animated'" [chartData]="piechartData"
+                        *ngIf="piechartData.length">
+                    </app-charts>
+                </div>
+            </div>
+        </div>
+    </div>
